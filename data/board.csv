@@ -1,0 +1,52 @@
+candidate_id,name,role,stage,entered_stage_on,owner
+C-1001,Ada Lawal,Frontend Engineer,Phone Interview,2026-10-13,john
+C-1002,Chidi Ibrahim,Backend Engineer,Phone Interview,2026-10-13,amaka
+C-1003,Ngozi Okafor,Backend Engineer,Phone Interview,2026-10-12,amaka
+C-1004,Emeka Adeyemi,QA Engineer,Phone Interview,2026-09-26,john
+C-1005,Funmi Bello,QA Engineer,Rejected,2026-09-26,grace
+C-1006,Tunde Okafor,Frontend Engineer,Applied,2026-10-10,tunde
+C-1007,Zainab Nwosu,Frontend Engineer,Technical Interview,2026-09-26,tunde
+C-1008,Ifeanyi Ibrahim,Frontend Engineer,Applied,2026-09-26,amaka
+C-1009,Amaka Lawal,Backend Engineer,Technical Interview,2026-10-12,john
+C-1010,Bola Obi,Frontend Engineer,Technical Interview,2026-09-27,grace
+C-1011,Kemi Lawal,Product Designer,Technical Interview,2026-09-30,tunde
+C-1012,Segun Okoro,Frontend Engineer,Offer,2026-10-07,john
+C-1013,Halima Obi,Data Analyst,Technical Interview,2026-10-04,grace
+C-1014,Obinna Okoro,QA Engineer,Withdrawn,2026-10-11,grace
+C-1015,Yemi Eze,Data Analyst,Applied,2026-09-29,grace
+C-1016,Uche Okafor,Backend Engineer,Offer,2026-09-26,tunde
+C-1017,Nkechi Lawal,Data Analyst,Technical Interview,2026-09-26,grace
+C-1018,Femi Adeyemi,Backend Engineer,Rejected,2026-09-29,john
+C-1019,Aisha Okafor,Data Analyst,Onsite Interview,2026-09-30,tunde
+C-1020,Kunle Onyeka,Product Designer,Rejected,2026-10-03,john
+C-1021,Chioma Balogun,Data Analyst,Screening,2026-10-11,grace
+C-1022,Dayo Okafor,Frontend Engineer,Offer,2026-10-10,amaka
+C-1023,Musa Nwosu,Product Designer,Rejected,2026-09-29,john
+C-1024,Efe Eze,Product Designer,Phone Interview,2026-10-06,amaka
+C-1025,Tobi Nwosu,QA Engineer,Screening,2026-10-01,tunde
+C-1026,Ronke Afolabi,Product Designer,Rejected,2026-10-10,john
+C-1027,Ike Eze,Frontend Engineer,Screening,2026-10-07,john
+C-1028,Sade Balogun,QA Engineer,Screening,2026-10-05,john
+C-1029,Gbenga Eze,Product Designer,Technical Interview,2026-09-25,tunde
+C-1030,Lola Eze,QA Engineer,Rejected,2026-09-24,john
+C-1031,Jide Balogun,QA Engineer,Phone Interview,2026-10-02,grace
+C-1032,Bisi Adeyemi,Product Designer,Onsite Interview,2026-10-13,amaka
+C-1033,Kelechi Adeyemi,Frontend Engineer,Phone Interview,2026-10-11,tunde
+C-1034,Hauwa Obi,Backend Engineer,Applied,2026-09-26,amaka
+C-1035,Wale Ibrahim,Backend Engineer,Rejected,2026-09-25,john
+C-1036,Ebere Adeyemi,Frontend Engineer,Technical Interview,2026-10-10,tunde
+C-1037,Sola Lawal,QA Engineer,Phone Interview,2026-10-11,john
+C-1038,Nneka Balogun,Product Designer,Technical Interview,2026-10-05,john
+C-1039,Ayo Eze,Backend Engineer,Offer,2026-10-06,grace
+C-1040,Ruth Onyeka,Frontend Engineer,Technical Interview,2026-10-08,tunde
+C-1041,Paul Eze,QA Engineer,Rejected,2026-09-28,tunde
+C-1042,Grace Afolabi,Backend Engineer,Onsite Interview,2026-10-06,tunde
+C-1043,David Eze,Data Analyst,Offer,2026-09-27,tunde
+C-1044,Mary Afolabi,Frontend Engineer,Technical Interview,2026-10-08,amaka
+C-1045,Peter Obi,Data Analyst,Technical Interview,,john
+C-1046,Grace Eze,QA Engineer,Offer,03/10/2026,amaka
+C-1047,David Bello,Backend Engineer,Phone Scren,2026-10-01,tunde
+C-1048,,Frontend Engineer,Screening,2026-10-02,grace
+C-1049,  Mary Okoro ,Product Designer,  onsite interview ,2026-10-03,john
+C-1050,Esther Lawal,Backend Engineer,Screening,2026-11-20,amaka
+C-1003,Joy Nwosu,Data Analyst,Applied,2026-09-30,tunde
