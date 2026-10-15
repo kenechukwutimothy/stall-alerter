@@ -1,0 +1,11 @@
+{
+  "default_threshold": 5,
+  "stage_thresholds": {
+    "Applied": 5,
+    "Screening": 5,
+    "Phone Interview": 5,
+    "Technical Interview": 7,
+    "Onsite Interview": 5,
+    "Offer": 3
+  }
+}

@@ -1,8 +1,11 @@
 import csv
-from dataclasses import dataclass
+import json
+import os
+from collections import defaultdict
+from dataclasses import dataclass, field
 from datetime import date, datetime
 
-STALL_THRESHOLD_DAYS = 5
+DEFAULT_THRESHOLD_DAYS = 5
 
 STAGE_ORDER = [
     "Applied",
@@ -15,13 +18,13 @@ STAGE_ORDER = [
 
 CLOSED_STAGES = {"Hired", "Rejected", "Withdrawn"}
 
-ACTIONS = {
-    "Applied": "Review the application and decide whether to screen.",
-    "Screening": "Finish the screen and send the candidate a yes or no.",
-    "Phone Interview": "Book the phone interview or collect the interviewer's notes.",
-    "Technical Interview": "Chase the interviewer for technical feedback.",
-    "Onsite Interview": "Hold the debrief and make a hire or no-hire decision.",
-    "Offer": "Call the candidate today to close or revise the offer.",
+ACTION_TEMPLATES = {
+    "Applied": "review the application and decide whether to screen",
+    "Screening": "finish the screen and send the candidate a yes or no",
+    "Phone Interview": "book the phone interview or collect the interviewer's notes",
+    "Technical Interview": "chase interviewer for technical feedback",
+    "Onsite Interview": "hold the debrief and make a hire or no-hire decision",
+    "Offer": "call the candidate to close or revise the offer",
 }
 
 REQUIRED_COLUMNS = ["candidate_id", "name", "role", "stage", "entered_stage_on", "owner"]
@@ -37,20 +40,62 @@ class Candidate:
     stage: str
     entered_stage_on: date
     owner: str
+    line_no: int = 0
 
 
 @dataclass
 class Stalled:
     candidate: Candidate
     days_in_stage: int
+    threshold: int
     action: str
+
+
+@dataclass
+class Config:
+    default_threshold: int = DEFAULT_THRESHOLD_DAYS
+    stage_thresholds: dict = field(default_factory=dict)
+
+    def threshold_for(self, stage):
+        return self.stage_thresholds.get(stage, self.default_threshold)
+
+
+class ConfigError(Exception):
+    pass
 
 
 def normalise_stage(raw):
     return _STAGE_LOOKUP.get((raw or "").strip().lower())
 
 
-def parse_row(row):
+def load_config(path):
+    """Return (Config, warnings). A missing file gives the defaults; a broken file raises ConfigError."""
+    if not os.path.exists(path):
+        return Config(), []
+    try:
+        with open(path, encoding="utf-8") as f:
+            raw = json.load(f)
+    except json.JSONDecodeError as e:
+        raise ConfigError(f"{path} is not valid JSON ({e.msg} at line {e.lineno})")
+
+    warnings = []
+    default = raw.get("default_threshold", DEFAULT_THRESHOLD_DAYS)
+    if not isinstance(default, int) or default < 0:
+        raise ConfigError(f"default_threshold in {path} must be a whole number of 0 or more")
+
+    thresholds = {}
+    for name, days in (raw.get("stage_thresholds") or {}).items():
+        stage = normalise_stage(name)
+        if stage is None or stage in CLOSED_STAGES:
+            warnings.append(f"config: ignoring threshold for unknown or closed stage '{name}'")
+            continue
+        if not isinstance(days, int) or days < 0:
+            raise ConfigError(f"threshold for '{name}' in {path} must be a whole number of 0 or more")
+        thresholds[stage] = days
+    return Config(default, thresholds), warnings
+
+
+def parse_row(row, line_no=0):
     """Return (Candidate, None) or (None, reason)."""
     for col in REQUIRED_COLUMNS:
         if not (row.get(col) or "").strip():
@@ -69,7 +114,24 @@ def parse_row(row):
         stage=stage,
         entered_stage_on=entered,
         owner=row["owner"].strip(),
+        line_no=line_no,
     ), None
+
+
+def remove_duplicates(candidates):
+    """Drop every candidate whose ID appears more than once. Return (unique, problems)."""
+    by_id = defaultdict(list)
+    for c in candidates:
+        by_id[c.candidate_id].append(c)
+    unique, problems = [], []
+    for c in candidates:
+        group = by_id[c.candidate_id]
+        if len(group) == 1:
+            unique.append(c)
+        elif c is group[0]:
+            lines = ", ".join(str(g.line_no) for g in group)
+            problems.append((group[0].line_no, f"duplicate candidate_id {c.candidate_id} on lines {lines}; all copies excluded"))
+    return unique, problems
 
 
 def load_board(path):
@@ -81,21 +143,29 @@ def load_board(path):
         if missing:
             raise ValueError(f"CSV is missing required columns: {', '.join(missing)}")
         for line_no, row in enumerate(reader, start=2):
-            cand, reason = parse_row(row)
+            cand, reason = parse_row(row, line_no)
             if cand:
                 candidates.append(cand)
             else:
                 problems.append((line_no, reason))
+    candidates, dup_problems = remove_duplicates(candidates)
+    problems = sorted(problems + dup_problems)
     return candidates, problems
 
 
-def find_stalled(candidates, today, threshold=STALL_THRESHOLD_DAYS):
+def suggest_action(candidate, days):
+    return f"Owner {candidate.owner}: {ACTION_TEMPLATES[candidate.stage]}; candidate has been waiting {days} days."
+
+
+def find_stalled(candidates, today, config=None):
+    config = config or Config()
     stalled = []
     for c in candidates:
         if c.stage in CLOSED_STAGES:
             continue
         days = (today - c.entered_stage_on).days
-        if days > threshold:
-            stalled.append(Stalled(c, days, ACTIONS[c.stage]))
+        limit = config.threshold_for(c.stage)
+        if days > limit:
+            stalled.append(Stalled(c, days, limit, suggest_action(c, days)))
     stalled.sort(key=lambda s: (-STAGE_ORDER.index(s.candidate.stage), -s.days_in_stage))
     return stalled

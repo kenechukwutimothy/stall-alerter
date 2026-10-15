@@ -19,13 +19,34 @@ python -m stall_alerter data/board.csv
 Options:
 
 - `--today YYYY-MM-DD` – treat this date as today (useful because the sample data is dated around 14 Oct 2026)
-- `--threshold N` – days in a stage before it counts as stalled (default 5)
+- `--config PATH` – thresholds file (default `config.json`)
+- `--threshold N` – override the default threshold for stages not listed in the config
 
 Example:
 
 ```
 python -m stall_alerter data/board.csv --today 2026-10-14
 ```
+
+## Configuration
+
+`config.json` sets how many days each stage may take before a candidate counts as stalled:
+
+```json
+{
+  "default_threshold": 5,
+  "stage_thresholds": { "Offer": 2, "Onsite Interview": 3 }
+}
+```
+
+- Stages not listed use `default_threshold`.
+- If `config.json` is missing, every stage uses 5 days.
+- If it is not valid JSON, the tool stops with an error rather than guessing.
+
+## Data problems
+
+Rows with missing fields, bad dates or unknown stages are skipped and listed at the end.
+If two or more rows share a `candidate_id`, all of them are excluded and reported, because the tool cannot tell which one is correct.
 
 ## Test
 
