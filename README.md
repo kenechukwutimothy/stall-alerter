@@ -48,6 +48,14 @@ python -m stall_alerter data/board.csv --today 2026-10-14
 Rows with missing fields, bad dates or unknown stages are skipped and listed at the end.
 If two or more rows share a `candidate_id`, all of them are excluded and reported, because the tool cannot tell which one is correct.
 
+## Load testing
+
+`data/big_board.csv` is a 10,000-row messy board for load testing. Regenerate it with:
+
+```
+python scripts/make_big_board.py 10000 data/big_board.csv
+```
+
 ## Test
 
 ```

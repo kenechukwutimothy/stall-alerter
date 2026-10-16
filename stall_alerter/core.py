@@ -139,10 +139,12 @@ def load_board(path):
     candidates, problems = [], []
     with open(path, newline="", encoding="utf-8-sig") as f:
         reader = csv.DictReader(f)
-        missing = [c for c in REQUIRED_COLUMNS if c not in (reader.fieldnames or [])]
+        reader.fieldnames = [(h or "").strip().lower() for h in (reader.fieldnames or [])]
+        missing = [c for c in REQUIRED_COLUMNS if c not in reader.fieldnames]
         if missing:
             raise ValueError(f"CSV is missing required columns: {', '.join(missing)}")
-        for line_no, row in enumerate(reader, start=2):
+        for row in reader:
+            line_no = reader.line_num
             cand, reason = parse_row(row, line_no)
             if cand:
                 candidates.append(cand)
