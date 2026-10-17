@@ -20,13 +20,21 @@ Options:
 
 - `--today YYYY-MM-DD` – treat this date as today (useful because the sample data is dated around 14 Oct 2026)
 - `--config PATH` – thresholds file (default `config.json`)
-- `--threshold N` – override the default threshold for stages not listed in the config
+- `--threshold N` – override the default threshold for stages not listed in the config (must be 0 or more)
+- `--top N` – print only the N most urgent candidates (default 20; `0` prints all)
+- `--show-problems` – list every skipped or suspicious row instead of a count per type
 
 Example:
 
 ```
 python -m stall_alerter data/board.csv --today 2026-10-14
 ```
+
+## Output
+
+1. A summary: total stalled, then counts per stage and per owner (always over all stalled candidates, not just the ones printed).
+2. The most urgent candidates (top 20 by default), later stages first, then longest wait.
+3. A count of skipped or suspicious rows by type.
 
 ## Configuration
 
@@ -35,7 +43,14 @@ python -m stall_alerter data/board.csv --today 2026-10-14
 ```json
 {
   "default_threshold": 5,
-  "stage_thresholds": { "Offer": 2, "Onsite Interview": 3 }
+  "stage_thresholds": {
+    "Applied": 5,
+    "Screening": 5,
+    "Phone Interview": 5,
+    "Technical Interview": 7,
+    "Onsite Interview": 5,
+    "Offer": 3
+  }
 }
 ```
 
@@ -45,7 +60,7 @@ python -m stall_alerter data/board.csv --today 2026-10-14
 
 ## Data problems
 
-Rows with missing fields, bad dates or unknown stages are skipped and listed at the end.
+Rows with missing fields, bad dates, unknown stages or future dates are skipped. By default the output shows a count per problem type; add `--show-problems` to list each row with its line number.
 If two or more rows share a `candidate_id`, all of them are excluded and reported, because the tool cannot tell which one is correct.
 
 ## Load testing

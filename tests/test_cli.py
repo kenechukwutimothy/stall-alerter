@@ -13,7 +13,7 @@ def test_invalid_today_gives_clear_error_not_traceback(capsys):
 
 
 def test_existing_command_still_works(capsys):
-    assert main(["data/board.csv", "--today", "2026-10-14"]) == 0
+    assert main(["data/board.csv", "--today", "2026-10-14", "--show-problems"]) == 0
     out = capsys.readouterr().out
     assert "Stalled candidates as of 2026-10-14" in out
     assert "duplicate candidate_id C-1003" in out

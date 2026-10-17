@@ -171,3 +171,33 @@ def find_stalled(candidates, today, config=None):
             stalled.append(Stalled(c, days, limit, suggest_action(c, days)))
     stalled.sort(key=lambda s: (-STAGE_ORDER.index(s.candidate.stage), -s.days_in_stage))
     return stalled
+
+
+PROBLEM_TYPES = [
+    ("duplicate candidate_id", "duplicate IDs"),
+    ("bad date", "bad dates"),
+    ("unknown stage", "unknown stages"),
+    ("missing", "missing fields"),
+    ("future date", "future dates"),
+]
+
+
+def problem_type(reason):
+    for prefix, label in PROBLEM_TYPES:
+        if reason.startswith(prefix):
+            return label
+    return "other"
+
+
+def summarise(stalled):
+    """Return (per_stage, per_owner) counts over the full stalled list."""
+    per_stage = {}
+    for stage in reversed(STAGE_ORDER):
+        n = sum(1 for s in stalled if s.candidate.stage == stage)
+        if n:
+            per_stage[stage] = n
+    per_owner = {}
+    for s in stalled:
+        per_owner[s.candidate.owner] = per_owner.get(s.candidate.owner, 0) + 1
+    per_owner = dict(sorted(per_owner.items(), key=lambda kv: (-kv[1], kv[0])))
+    return per_stage, per_owner
